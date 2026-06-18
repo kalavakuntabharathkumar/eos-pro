@@ -248,3 +248,12 @@ class Workflow(Base):
     is_active = Column(Boolean, default=True)
     created_by = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime)
+
+# Performance indexes on high-traffic foreign key columns
+Index("ix_leave_employee", "leave_requests", "employee_id")
+Index("ix_attendance_employee", "attendance", "employee_id")
+Index("ix_payslip_employee", "payslips", "employee_id")
+Index("ix_task_project", "tasks", "project_id")
+Index("ix_timesheet_employee", "timesheets", "employee_id")
+Index("ix_notification_user", "notifications", "user_id")
+Index("ix_activity_user", "activity_logs", "user_id")
