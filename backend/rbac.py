@@ -67,3 +67,6 @@ def inherit_permissions(role: Role) -> list:
     if role == Role.MANAGER:
         base = list(set(base + PERMISSIONS.get(Role.EMPLOYEE, [])))
     return base
+
+# Fix: managers now inherit employee-level permissions
+PERMISSIONS[Role.MANAGER] = list(set(PERMISSIONS.get(Role.MANAGER, []) + PERMISSIONS.get(Role.EMPLOYEE, [])))
