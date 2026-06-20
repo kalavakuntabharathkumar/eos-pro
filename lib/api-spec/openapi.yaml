@@ -618,3 +618,4 @@ paths:
       responses:
         '200': { description: Closed }
   # CRM and Finance schemas added above in /crm/* and /finance/* paths
+  # Finance invoice and expense schemas added above
