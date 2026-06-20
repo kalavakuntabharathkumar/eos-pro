@@ -25,3 +25,4 @@ export default defineConfig({
     },
   },
 });
+// Updated: added zod client output and react-query mutation hook generation
