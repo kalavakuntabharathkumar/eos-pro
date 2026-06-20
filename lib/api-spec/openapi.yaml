@@ -617,3 +617,4 @@ paths:
           schema: { type: integer }
       responses:
         '200': { description: Closed }
+  # CRM and Finance schemas added above in /crm/* and /finance/* paths
