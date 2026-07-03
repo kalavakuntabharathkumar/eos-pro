@@ -50,3 +50,5 @@ Thumbs.db
 .agents/
 attached_assets/
 *.replit.bak
+.replit 
+replit.md 
