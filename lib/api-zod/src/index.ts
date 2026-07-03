@@ -1,3 +1,2 @@
-// Re-export all generated Zod validation schemas
-export * from './generated/api';
-export { z } from 'zod';
+export * from "./generated/api";
+export * from "./generated/types";
