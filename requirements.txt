@@ -9,3 +9,14 @@ openai==1.30.5
 python-dotenv==1.0.1
 alembic==1.13.1
 cryptography==42.0.8
+alembic
+cryptography
+fastapi
+openai
+pydantic
+pydantic-settings
+PyJWT
+python-dotenv
+python-multipart
+sqlalchemy
+uvicorn[standard]
