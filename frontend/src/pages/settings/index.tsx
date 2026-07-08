@@ -92,6 +92,11 @@ export default function SettingsPage() {
   const [notifs, setNotifs] = useState({ email: true, push: false, slack: true, alerts: true });
   const [name, setName] = useState(user?.name ?? "");
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  // Re-sync when auth user loads asynchronously (e.g. on hard refresh)
+  React.useEffect(() => {
+    if (user?.name) setName(user.name);
+  }, [user?.name]);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 

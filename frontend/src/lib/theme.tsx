@@ -28,26 +28,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeSetting>(() => {
     const stored = localStorage.getItem("eos_theme") as ThemeSetting | null;
     if (stored === "light" || stored === "dark" || stored === "system") return stored;
-    // Migrate old "light"/"dark" values
     return "system";
   });
 
-  const effectiveTheme: "light" | "dark" =
-    theme === "system" ? getSystemTheme() : theme;
+  // Stateful so consumers re-render when the OS preference flips
+  const [systemTheme, setSystemTheme] = useState<"light" | "dark">(getSystemTheme);
+
+  const effectiveTheme: "light" | "dark" = theme === "system" ? systemTheme : theme;
 
   useEffect(() => {
     applyTheme(effectiveTheme);
     localStorage.setItem("eos_theme", theme);
   }, [theme, effectiveTheme]);
 
-  // React to OS preference changes when in system mode
+  // Keep systemTheme state in sync with OS changes
   useEffect(() => {
-    if (theme !== "system") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = () => applyTheme(mq.matches ? "dark" : "light");
+    const handler = () => {
+      const next: "light" | "dark" = mq.matches ? "dark" : "light";
+      setSystemTheme(next);
+      // Only immediately apply if we are in system mode
+      if (localStorage.getItem("eos_theme") === "system") applyTheme(next);
+    };
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
-  }, [theme]);
+  }, []);
 
   const setTheme = (t: ThemeSetting) => setThemeState(t);
 

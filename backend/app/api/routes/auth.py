@@ -64,6 +64,10 @@ def get_me(current_user=Depends(get_current_user)):
     return user_to_dict(current_user)
 
 
+_AVATAR_MAX_BYTES = 512 * 1024  # 512 KB base64 upper bound
+_ALLOWED_AVATAR_PREFIXES = ("data:image/jpeg;base64,", "data:image/png;base64,", "data:image/webp;base64,", "data:image/gif;base64,")
+
+
 class MeUpdate(BaseModel):
     name: Optional[str] = None
     avatar: Optional[str] = None
@@ -71,6 +75,16 @@ class MeUpdate(BaseModel):
 
 @router.patch("/me")
 def update_me(body: MeUpdate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    if body.name is not None:
+        name = body.name.strip()
+        if not name or len(name) > 120:
+            raise HTTPException(status_code=400, detail="Name must be between 1 and 120 characters")
+        body = body.model_copy(update={"name": name})
+    if body.avatar is not None:
+        if len(body.avatar) > _AVATAR_MAX_BYTES:
+            raise HTTPException(status_code=400, detail="Avatar image is too large (max 512 KB)")
+        if not any(body.avatar.startswith(p) for p in _ALLOWED_AVATAR_PREFIXES):
+            raise HTTPException(status_code=400, detail="Avatar must be a JPEG, PNG, WebP, or GIF data URI")
     for k, v in body.model_dump(exclude_none=True).items():
         setattr(current_user, k, v)
     db.commit()
