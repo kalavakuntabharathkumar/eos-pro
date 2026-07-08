@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useListAttendance } from "@workspace/api-client-react";
-import { Button } from "@/components/ui/button";
 import {
   Clock, CheckCircle2, XCircle, AlertTriangle,
   Search, Calendar, UserCheck, TrendingUp, Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 
 const STATUS_CONFIG: Record<string, { label: string; icon: React.ElementType; badge: string; dot: string }> = {
@@ -31,7 +30,7 @@ export default function AttendancePage() {
   const { data: attendance, isLoading } = useListAttendance();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const { toast } = useToast();
+  const { isAdmin } = useAuth();
 
   const filtered = attendance?.filter(r => {
     const matchStatus = statusFilter === "all" || r.status === statusFilter;
@@ -66,10 +65,12 @@ export default function AttendancePage() {
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Attendance</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Daily check-in/out tracking and workforce presence.</p>
         </div>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs"
-          onClick={() => toast({ title: "Export", description: "Exporting attendance report…" })}>
-          <Download className="w-3.5 h-3.5" /> Export
-        </Button>
+        {isAdmin && (
+          <a href="/api/export/attendance" download
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+            <Download className="w-3.5 h-3.5" /> Export CSV
+          </a>
+        )}
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
